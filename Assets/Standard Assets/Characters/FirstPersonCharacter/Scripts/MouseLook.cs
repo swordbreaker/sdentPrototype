@@ -28,8 +28,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         }
 
 
-        public void LookRotation(Transform character, Transform camera)
+        public Quaternion LookRotation(Transform character, Transform camera)
         {
+            Quaternion playerLocalRotation;
             float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
             float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
 
@@ -41,18 +42,22 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             if(smooth)
             {
-                character.localRotation = Quaternion.Slerp (character.localRotation, m_CharacterTargetRot,
+                playerLocalRotation = Quaternion.Slerp(character.localRotation, m_CharacterTargetRot,
                     smoothTime * Time.deltaTime);
+                //character.localRotation = Quaternion.Slerp (character.localRotation, m_CharacterTargetRot,
+                //    smoothTime * Time.deltaTime);
                 camera.localRotation = Quaternion.Slerp (camera.localRotation, m_CameraTargetRot,
                     smoothTime * Time.deltaTime);
             }
             else
             {
-                character.localRotation = m_CharacterTargetRot;
+                playerLocalRotation = m_CharacterTargetRot;
+                //character.localRotation = m_CharacterTargetRot;
                 camera.localRotation = m_CameraTargetRot;
             }
 
             UpdateCursorLock();
+            return playerLocalRotation;
         }
 
         public void SetCursorLock(bool value)
