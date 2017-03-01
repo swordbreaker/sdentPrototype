@@ -19,6 +19,7 @@ public class Hand : MonoBehaviour
 	private void Start ()
 	{
 		_join = GetComponent<FixedJoint>();
+	    _breackForceSqr = BreackForce * BreackForce;
 	}
 
 	private void Update()
@@ -53,7 +54,7 @@ public class Hand : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		if (_join.currentForce.sqrMagnitude < _breackForceSqr)
+		if (_join.currentForce.sqrMagnitude > _breackForceSqr)
 		{
 			_join.connectedBody = null;
 		}

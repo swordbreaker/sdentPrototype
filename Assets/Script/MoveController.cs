@@ -1,7 +1,7 @@
-﻿using Assets.Script.Helpers;
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
+
 
 public class MoveController : MonoBehaviour
 {
@@ -9,9 +9,9 @@ public class MoveController : MonoBehaviour
     public float Speed;
     public float JumpForce;
     public float GroundCheckDistance = 0.1f;
+    public MouseLook MouseLook = new MouseLook();
     private Vector3 _movementDirection;
     private Rigidbody _rigidbody;
-    private MouseLook mouseLook = new MouseLook();
     private bool _isGrounded;
     private GravityController _gravityController;
     private CapsuleCollider _capsuleCollider;
@@ -20,12 +20,14 @@ public class MoveController : MonoBehaviour
     private bool _isJumping;
     private bool _previouslyGrounde;
 
+    
+
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
         _capsuleCollider = GetComponent<CapsuleCollider>();
         _gravityController = GetComponent<GravityController>();
-        mouseLook.Init(transform, FpsCamera);
+        MouseLook.Init(transform, FpsCamera);
     }
 
     private void Update()
@@ -94,7 +96,7 @@ public class MoveController : MonoBehaviour
 
         // get the rotation before it's changed
 
-        var mouseRotation = mouseLook.LookRotation(transform, FpsCamera);
+        var mouseRotation = MouseLook.LookRotation(transform, FpsCamera);
         transform.localRotation = mouseRotation;
 
         if (_gravityController.UsesGravityManipultation)
