@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Assets.Script;
 using Assets.Script.Helpers;
@@ -7,9 +8,10 @@ using UnityEngine;
 
 public class GravityController : MonoBehaviour
 {
+	public Vector3[] _rays;
 	public float MaxDistance;
 	private Ray _groundRay = new Ray();
-    private Ray _forwardRay;
+	private Ray _forwardRay;
 	private Rigidbody _rigidbody;
 	private Vector3 _playerGravity;
 	private Vector3 _defaultGravity = new Vector3(0f,-9.81f,0f);
@@ -28,36 +30,57 @@ public class GravityController : MonoBehaviour
 	private void FixedUpdate ()
 	{
 		//_rigidbody.AddForce(_playerGravity);
-		_groundRay.origin = transform.position;
-		_groundRay.direction = transform.TransformDirection(Vector3.down);
-	    _forwardRay.origin = transform.position;
-        _forwardRay.direction = transform.TransformDirection(new Vector3(0,-1,1));
+		//_groundRay.origin = transform.position;
+		//_groundRay.direction = transform.TransformDirection(Vector3.down);
+	 //   _forwardRay.origin = transform.position;
+  //      _forwardRay.direction = transform.TransformDirection(new Vector3(0,-1,1));
 
+	 //   RaycastHit hitDown;
+	 //   RaycastHit hitForward;
+  //      Vector3 forwardNormal = new Vector3();
 
-        Debug.DrawRay(_groundRay.origin, _groundRay.direction * 3, Color.blue);
-        Debug.DrawRay(_forwardRay.origin, _forwardRay.direction * 3, Color.blue);
-		Debug.DrawRay(transform.position, _playerGravity, Color.red);
+		var normal = Vector3.zero;
 
-	    RaycastHit hitDown;
-	    RaycastHit hitForward;
-        Vector3 forwardNormal = new Vector3();
-
-        if (Physics.Raycast(_groundRay, out hitForward, MaxDistance, LayerMask.GetMask("GravityChanger")))
-        {
-            forwardNormal = hitForward.normal;
-        }
-
-        if (Physics.Raycast(_groundRay, out hitDown, MaxDistance, LayerMask.GetMask("GravityChanger")))
+		foreach (var r in GetRays())
 		{
-			var normal = hitDown.normal;
-            Physics.gravity = -normal * 9.81f;
-			UsesGravityManipultation = true;
-
-			Normal = Vector3.Lerp(normal, forwardNormal, 0.5f);
+			RaycastHit hit;
+			
+			if (Physics.Raycast(r, out hit, MaxDistance, LayerMask.GetMask("GravityChanger")))
+			{
+				if (normal == Vector3.zero)
+				{
+					normal = hit.normal;
+				}
+				else
+				{
+					normal = Vector3.Lerp(normal, hit.normal, 0.5f);
+				}
+			}
 		}
-        //else
-        //{
-        //    Normal = Vector3.up;
-        //}
+
+		if (normal != Vector3.zero)
+		{
+			Physics.gravity = -normal * 9.81f;
+			UsesGravityManipultation = true;
+			Normal = normal;
+		}
+		else
+		{
+			UsesGravityManipultation = false;
+		}
+	}
+
+	private void OnDrawGizmos()
+	{
+		foreach (var r in GetRays())
+		{
+			Gizmos.color = Color.cyan;
+			Gizmos.DrawRay(r);
+		}
+	}
+
+	private IEnumerable<Ray> GetRays()
+	{
+		return _rays.Select(r => new Ray(transform.position, transform.TransformDirection(r)));
 	}
 }

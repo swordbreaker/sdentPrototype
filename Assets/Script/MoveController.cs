@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using Assets.Script;
+using DG.Tweening;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
@@ -51,7 +52,7 @@ public class MoveController : MonoBehaviour
         if (_jump && _isGrounded)
         {
             _rigidbody.drag = 0f;
-            _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0f, _rigidbody.velocity.z);
+            //_rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0f, _rigidbody.velocity.z);
             var jumpVector = transform.TransformDirection(new Vector3(0f, JumpForce, 0f));
             _rigidbody.AddForce(jumpVector, ForceMode.Impulse);
             _jumpForce = Vector3.zero;
@@ -102,7 +103,7 @@ public class MoveController : MonoBehaviour
         if (_gravityController.UsesGravityManipultation)
         {
             var newRotation = Quaternion.FromToRotation(transform.up, _gravityController.Normal)*transform.rotation;
-            transform.DORotate(newRotation.eulerAngles, Time.deltaTime*30f);
+            transform.DORotate(newRotation.eulerAngles, Time.deltaTime * 30f);
         }
 
         float oldYRotation = transform.eulerAngles.y;
@@ -111,7 +112,7 @@ public class MoveController : MonoBehaviour
         {
             // Rotate the rigidbody velocity to match the new direction that the character is looking
             Quaternion velRotation = Quaternion.AngleAxis(transform.eulerAngles.y - oldYRotation, Vector3.up);
-            _rigidbody.velocity = velRotation*_rigidbody.velocity;
+            _rigidbody.velocity = velRotation * _rigidbody.velocity;
         }
     }
 }
