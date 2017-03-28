@@ -97,14 +97,16 @@ public class MoveController : MonoBehaviour
 
         // get the rotation before it's changed
 
-        var mouseRotation = MouseLook.LookRotation(transform, FpsCamera);
-        transform.localRotation = mouseRotation;
-
         if (_gravityController.UsesGravityManipultation)
         {
             var newRotation = Quaternion.FromToRotation(transform.up, _gravityController.Normal)*transform.rotation;
-            transform.DORotate(newRotation.eulerAngles, Time.deltaTime * 30f);
+            newRotation = Quaternion.Slerp(transform.localRotation, newRotation, 5 * Time.deltaTime);
+            transform.rotation = newRotation;
         }
+
+
+        var mouseRotation = MouseLook.LookRotation(transform, FpsCamera);
+        transform.localRotation *= mouseRotation;
 
         float oldYRotation = transform.eulerAngles.y;
 

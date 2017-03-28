@@ -58,7 +58,9 @@ public class GravityController : MonoBehaviour
 			}
 		}
 
-		if (normal != Vector3.zero)
+        Debug.DrawRay(transform.position, normal, Color.red);
+
+        if (normal != Vector3.zero)
 		{
 			Physics.gravity = -normal * 9.81f;
 			UsesGravityManipultation = true;
